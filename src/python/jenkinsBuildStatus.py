@@ -36,6 +36,7 @@ class BuildStatus:
                 sys.exit()
             elif opt in "-j":
                 self.jenkins_url = arg
+                self.jenkins_url += "lastBuild/api/json"                # always get the last build
             elif opt in "-b":
                 self.baud_rate = arg
             elif opt in "-p":
@@ -52,7 +53,6 @@ class BuildStatus:
         print "Polling..."
 
         try:
-            self.jenkins_url += "lastBuild/api/json"                    # always get the last build
             basic_auth = 'Basic %s' % self.auth
             headers = {'Authorization': basic_auth}                     # Basic auth is required
             request = urllib2.Request(self.jenkins_url, '', headers)    # Build the request
