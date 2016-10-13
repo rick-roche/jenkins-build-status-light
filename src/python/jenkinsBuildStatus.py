@@ -17,7 +17,7 @@ OFF         = 'o'   # No lights on
 # Other constants
 POLL_RATE_S = 30    # Period to wait between polls in seconds
 DEFAULT_BAUD = 9600 # Default baud rate
-USAGE = 'usage: ciTrafficLight.py -j <jenkins_url> -b <baud_rate> -p <port> -f <poll_frequency_seconds> -a <b64(username:password)>'    # Usage string
+USAGE = 'usage: jenkinsBuildStatus.py -j <jenkins_url> -b <baud_rate> -p <port> -f <poll_frequency_seconds> -a <b64(username:password)>'    # Usage string
 
 class BuildStatus:
     def __init__(self, sys_args):

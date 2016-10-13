@@ -18,7 +18,7 @@ POLL_RATE_S = 30                # Period to wait between polls of the Jenkins jo
 STAGE_CYCLE_TIME_S = 15         # Period to wait between showing off each stage
 DEAD_TIME_S = 2                 # Period of dead time
 DEFAULT_BAUD = 9600 # Default baud rate
-USAGE = 'usage: ciTrafficLight.py -j <jenkins_url> -b <baud_rate> -p <port> -f <poll_frequency_seconds> -a <b64(username:password)>'    # Usage string
+USAGE = 'usage: jenkinsPipelineStatus.py -j <jenkins_url> -b <baud_rate> -p <port> -f <poll_frequency_seconds> -a <b64(username:password)>'    # Usage string
 
 class PipelineStatus:
     def __init__(self, sys_args):
