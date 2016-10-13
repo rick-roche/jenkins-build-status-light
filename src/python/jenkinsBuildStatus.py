@@ -52,7 +52,6 @@ class BuildStatus:
 
     def poll(self):
 
-
         d = datetime.datetime.now()
         is_week_day = d.isoweekday() in range(1, 6)
         is_work_hour = d.hour in range(7, 18)
