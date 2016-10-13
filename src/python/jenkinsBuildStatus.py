@@ -3,6 +3,7 @@ import urllib2
 import time
 import serial
 import sys, getopt
+import datetime
 
 # Arduino colour configurations
 SUCCESS     = 'g'   # Green
@@ -50,44 +51,54 @@ class BuildStatus:
         time.sleep(1) # Give the serial port time to settle
 
     def poll(self):
-        print "Polling..."
 
-        try:
-            basic_auth = 'Basic %s' % self.auth
-            headers = {'Authorization': basic_auth}                     # Basic auth is required
-            request = urllib2.Request(self.jenkins_url, '', headers)    # Build the request
-            jenkins_stream = urllib2.urlopen(request)                   # Make the HTTP request
-            http_status_code = jenkins_stream.getcode()                 # Grab the HTTP status code
 
-            if http_status_code == 200:
-                try:
-                    last_build = json.load(jenkins_stream)
-                    is_building = last_build['building']
-                    build_result = last_build['result']
+        d = datetime.datetime.now()
+        is_week_day = d.isoweekday() in range(1, 6)
+        is_work_hour = d.hour in range(7, 18)
 
-                    print 'is_building: %s; build_result: %s' % (is_building, build_result)
+        # only run the lights if its a work day
+        if is_week_day and is_work_hour:
+            print "Polling..."
+            try:
+                basic_auth = 'Basic %s' % self.auth
+                headers = {'Authorization': basic_auth}                     # Basic auth is required
+                request = urllib2.Request(self.jenkins_url, '', headers)    # Build the request
+                jenkins_stream = urllib2.urlopen(request)                   # Make the HTTP request
+                http_status_code = jenkins_stream.getcode()                 # Grab the HTTP status code
 
-                    if is_building:
-                        self.ser.write(BUILDING)
-                    else:
-                        if build_result == "SUCCESS":
-                            self.ser.write(SUCCESS)
-                        elif build_result == "FAILURE":
-                            self.ser.write(FAILURE)
-                        elif build_result == "ABORTED":
-                            self.ser.write(ABORTED)
-                        elif build_result == "WAITING":
-                            self.ser.write(WAITING) # No status from jenkins yet on how to check waiting for input
+                if http_status_code == 200:
+                    try:
+                        last_build = json.load(jenkins_stream)
+                        is_building = last_build['building']
+                        build_result = last_build['result']
+
+                        print 'is_building: %s; build_result: %s' % (is_building, build_result)
+
+                        if is_building:
+                            self.ser.write(BUILDING)
                         else:
-                            self.ser.write(EXCEPTION)
+                            if build_result == "SUCCESS":
+                                self.ser.write(SUCCESS)
+                            elif build_result == "FAILURE":
+                                self.ser.write(FAILURE)
+                            elif build_result == "ABORTED":
+                                self.ser.write(ABORTED)
+                            elif build_result == "WAITING":
+                                self.ser.write(WAITING) # No status from jenkins yet on how to check waiting for input
+                            else:
+                                self.ser.write(EXCEPTION)
 
-                except:
-                    print "Failed to parse json"
-                    self.ser.write(EXCEPTION)
+                    except:
+                        print "Failed to parse json"
+                        self.ser.write(EXCEPTION)
 
-        except urllib2.HTTPError, e:
-            print "HTTP error: %s" % e
-            self.ser.write(EXCEPTION)
+            except urllib2.HTTPError, e:
+                print "HTTP error: %s" % e
+                self.ser.write(EXCEPTION)
+
+        else:
+            self.ser.write(OFF) # turn the lights off
 
         time.sleep(POLL_RATE_S)
         self.poll()
