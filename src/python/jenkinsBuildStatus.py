@@ -92,8 +92,8 @@ class BuildStatus:
                         print "Failed to parse json"
                         self.ser.write(EXCEPTION)
 
-            except urllib2.HTTPError, e:
-                print "HTTP error: %s" % e
+            except (urllib2.HTTPError, urllib2.URLError) as e:
+                print "Transport error: %s" % e
                 self.ser.write(EXCEPTION)
 
         else:
