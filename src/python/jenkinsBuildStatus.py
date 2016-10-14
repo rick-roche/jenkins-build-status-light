@@ -50,12 +50,6 @@ class BuildStatus:
         self.ser = serial.Serial(self.com_port, self.baud_rate)
         time.sleep(1) # Give the serial port time to settle
 
-    def infinity(self):
-        forever = True
-
-        while forever:
-            self.poll()
-
     def poll(self):
 
         d = datetime.datetime.now()
@@ -106,7 +100,12 @@ class BuildStatus:
             self.ser.write(OFF) # turn the lights off
 
         time.sleep(POLL_RATE_S)
-        self.poll()
+
+    def infinity(self):
+        forever = True
+
+        while forever:
+            self.poll()
 
     def __del__(self):
         if hasattr(self, 'ser'):

@@ -110,7 +110,12 @@ class PipelineStatus:
             self.ser.write(EXCEPTION)
 
         time.sleep(POLL_RATE_S)
-        self.poll()
+
+    def infinity(self):
+        forever = True
+
+        while forever:
+            self.poll()
 
     def __del__(self):
         if hasattr(self, 'ser'):
@@ -118,4 +123,4 @@ class PipelineStatus:
             self.ser.close()    # close the serial port
 
 if __name__=="__main__":
-    PipelineStatus(sys.argv[1:]).poll()
+    PipelineStatus(sys.argv[1:]).infinity()
