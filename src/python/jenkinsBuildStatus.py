@@ -50,6 +50,12 @@ class BuildStatus:
         self.ser = serial.Serial(self.com_port, self.baud_rate)
         time.sleep(1) # Give the serial port time to settle
 
+    def infinity(self):
+        forever = True
+
+        while forever:
+            self.poll()
+
     def poll(self):
 
         d = datetime.datetime.now()
@@ -108,4 +114,4 @@ class BuildStatus:
             self.ser.close()    # close the serial port
 
 if __name__=="__main__":
-    BuildStatus(sys.argv[1:]).poll()
+    BuildStatus(sys.argv[1:]).infinity()
